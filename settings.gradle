@@ -1,0 +1,5 @@
+rootProject.name = 'spring-config-server-demo'
+
+include 'app-client'
+include 'config-server'
+include 'e2e-tests'

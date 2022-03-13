@@ -1,0 +1,79 @@
+<html xmlns:e="http://exam.extension.io" xmlns:cc="http://www.concordion.org/2007/concordion" lang="en">
+<body>
+<h2>Spring Cloud Server Demo</h2>
+<hr/>
+
+<h3>Actors</h3>
+<p>
+    Specification demonstrates two applications:<br/>
+    <ul>
+        <li>Spring Cloud Config Server with Redis used as config source, port 8888</li>
+        <li>Client App, simple Spring Boot App that uses Config Server as source of configuration (profile=demo, name=client-app, port=8080)</li>
+    </ul>
+</p>
+<h3>Endpoints</h3>
+<p>
+    Config Server
+    <ul>
+        <li><b>GET host:port/{application-name}/{profile}</b> - standard endpoint given by spring cloud server to request application configs</li>
+        <li><b>POST host:port/properties</b> - endpoint to set specific properties for any client application</li>
+    </ul>
+    Client Application
+    <ul>
+        <li><b>GET host:port/property-value/{key}</b> - endpoint to get value of some application property</li>
+        <li><b>POST host:port/actuator/refresh</b> - standard endpoint by spring actuator to refresh configuration</li>
+    </ul>
+
+</p>
+
+<h3>Test Cases</h3>
+<h4>Setting and getting property value with Spring Cloud Config Server</h4>
+<e:example name="Getting refreshed value">
+    <e:given>
+        1. Let's pick "some.random.property" and request it's value loaded from client-app local config file.
+        <e:get url="http://localhost:8080/property-value/some.random.property" contentType="application/json">
+            <e:case desc="Property value from client-app local config">
+                <e:expected statusCode="200" from="/data/given/default-property-value.json"/>
+            </e:case>
+        </e:get>
+
+        2. Let's check that config server responses with an empty config for client-app and profile demo
+        <e:get url="http://localhost:8888/client-app/demo" contentType="application/json">
+            <e:case desc="Empty config for client-app at config server">
+                <e:expected statusCode="200" from="/data/given/empty-client-app-demo-config.json"/>
+            </e:case>
+        </e:get>
+    </e:given>
+    <e:when>
+        3. Let's update "some.random.property" for client-app in config server
+        <e:post url="http://localhost:8888/properties" contentType="application/json">
+            <e:case desc="Property value updated at config server">
+                <e:body from="/data/when/property-value-update-rq.json"/>
+                <e:expected statusCode="200" from="/data/when/property-value-update-rs.json"/>
+            </e:case>
+        </e:post>
+        4. Let's update property value in client-app with standard Spring Actuator endpoint
+        <e:post url="http://localhost:8080/actuator/refresh" contentType="application/json">
+            <e:case desc="Property value updated at client-app">
+                <e:expected statusCode="200" from="/data/when/client-app-actuator-refresh-rs.json"/>
+            </e:case>
+        </e:post>
+    </e:when>
+    <e:then>
+        5. Let's check that property value is updated from config server
+        <e:get url="http://localhost:8080/property-value/some.random.property" contentType="application/json">
+            <e:case desc="Property value at client-app updated from config server">
+                <e:expected statusCode="200" from="/data/then/new-property-value.json"/>
+            </e:case>
+        </e:get>
+
+        6. Let's check that config server responses with updated config for client-app
+        <e:get url="http://localhost:8888/client-app/demo" contentType="application/json">
+            <e:case desc="Updated config for client-app at config server">
+                <e:expected statusCode="200" from="/data/then/updated-client-app-demo-config.json"/>
+            </e:case>
+        </e:get>
+    </e:then>
+</e:example>
+</body>
+</html>

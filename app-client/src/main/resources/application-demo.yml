@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: "client-app"
+  cloud:
+    config:
+      uri: "http://localhost:8888"
+  config:
+    import: "optional:configserver:"
+
+management.endpoints.web.exposure.include: "*"
+some.random.property: default.value

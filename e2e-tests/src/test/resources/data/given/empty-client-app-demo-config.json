@@ -1,0 +1,19 @@
+{
+  "name": "client-app",
+  "profiles": [
+    "demo"
+  ],
+  "label": null,
+  "version": null,
+  "state": null,
+  "propertySources": [
+    {
+      "name": "redis:client-app-demo",
+      "source": {}
+    },
+    {
+      "name": "redis:client-app",
+      "source": {}
+    }
+  ]
+}
