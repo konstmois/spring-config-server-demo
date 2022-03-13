@@ -19,4 +19,6 @@ gradle e2e-tests:test
 ```
 3. See the spec at
    `e2e-tests/reports/specs/Specs.html`
+   
+4. Or visit [github pages](https://konstmois.github.io/spring-config-server-demo/specs/specs/UpdatingProperties.html)
 
