@@ -8,15 +8,14 @@ import org.jetbrains.annotations.NotNull;
 public class Specs extends AbstractSpecs {
 
     //Spring Config Sources Environment
-    private ConfigSources CONFIG_SOURCES;
+    private static final ConfigSources CONFIG_SOURCES = new ConfigSources();;
     //Systems under testing: ConfigServer and AppClient
-    private Apps APPS;
+    private Apps APPS = new Apps();
 
     @NotNull
     @Override
     protected ExamExtension init() {
         enableEnvironmentOnStaticPortStartup();
-        CONFIG_SOURCES = new ConfigSources();
         CONFIG_SOURCES.up();
         return new ExamExtension(
                 new WsPlugin(8080)
@@ -29,7 +28,6 @@ public class Specs extends AbstractSpecs {
     }
 
     @Override protected void startSut() {
-        APPS = new Apps(CONFIG_SOURCES);
         APPS.up();
     }
     @Override protected void stopSut() {

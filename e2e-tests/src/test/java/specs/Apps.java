@@ -10,10 +10,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class Apps extends Environment {
 
-    public Apps(ConfigSources src) {
+    public Apps() {
         super(
             Map.of(
-                    "CONFIG_SERVER", configServerJar(src),
+                    "CONFIG_SERVER", configServerJar(),
                     "APP_CLIENT", appClientJar()
             )
         );
@@ -21,15 +21,12 @@ public class Apps extends Environment {
     }
 
     @NotNull
-    private static JarWebService configServerJar(ConfigSources src) {
+    private static JarWebService configServerJar() {
         return new JarWebService(
                 new File("../config-server/build/libs/config-server-0.0.1-SNAPSHOT.jar"),
                 8888,
                 new JarApplication.Config()
-                        .addArgs(
-                                "--spring.profiles.active=redis",
-                                "--spring.redis.port=" +  src.redis().config().getPort()
-                                )
+                        .addArgs("--spring.profiles.active=redis")
 
         );
     }
